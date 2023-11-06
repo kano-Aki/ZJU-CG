@@ -1,0 +1,8 @@
+{
+    "C_Cpp.default.cppStandard": "c++14",
+    "files.encoding": "gbk",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/include/**",
+        "%MinGWInclude%/**"
+    ]
+}
