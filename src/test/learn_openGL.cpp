@@ -66,10 +66,10 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);//设置窗口大小改变时的回调函数
 
     float vertices[]={
-        0.5f,0.5f,0.0f,     1.0f,0.0f,0.0f,     1.0f,1.0f,
-        -0.5f,0.5f,0.0f,    0.0f,1.0f,0.0f,     0.0f,1.0f,
+        0.5f,0.5f,0.0f,     1.0f,0.0f,0.0f,     2.0f,2.0f,
+        -0.5f,0.5f,0.0f,    0.0f,1.0f,0.0f,     0.0f,2.0f,
         -0.5f,-0.5f,0.0f,   0.0f,0.0f,1.0f,     0.0f,0.0f,
-        0.5f,-0.5f,0.0f,    1.0f,1.0f,1.0f,     1.0f,0.0f
+        0.5f,-0.5f,0.0f,    1.0f,1.0f,1.0f,     2.0f,0.0f
     };
     
     unsigned int indices[]={
