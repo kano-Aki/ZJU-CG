@@ -67,3 +67,9 @@ int ShaderProgram::setFloat4(const char* name,float value1,float value2,float va
     glUniform4f(glGetUniformLocation(program_ID,name),value1,value2,value3,value4);
     return 0;
 }
+
+int ShaderProgram::setMat4(const char* name, glm::mat4 value)
+{
+    glUniformMatrix4fv(glGetUniformLocation(program_ID,name),1,GL_FALSE,glm::value_ptr(value));
+    return 0;
+}
