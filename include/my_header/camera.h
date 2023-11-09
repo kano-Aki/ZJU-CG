@@ -43,4 +43,7 @@ public:
 };
 //关于world up向量，实际是一个常量。(组略指向相机的+y方向)，gaze×world up，实际是world up垂直gaze的分量与其叉乘，这样子得到的
 //便是相机的+x轴，然后再用+x轴×gaze(-z)得到真正的+y轴
+
+//为什么直接给定gaze向量(即front),因为修改pitch和yaw实际上就在修改gaze
+//不考虑的滚转角，体现为整个页面的旋转
 #endif

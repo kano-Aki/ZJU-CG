@@ -91,6 +91,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     //unity中顺序一般为yxz。先绕y轴旋转yaw，然后绕x轴旋转pitch，考虑ppt中的变换矩阵，Rx*Ry，最后方向向量应为(-siny,-cosy*sinp,cosy*cosp)
     //教程的顺序则是先pitch，再raw
     //参考https://blog.csdn.net/Jaihk662/article/details/106519595
+    //个人认为这些顺序都是自己规定的，保持统一即可
 
     //关于openGL的左手系
     //首先，opengl之所以是“右手坐标系”，是针对模型空间，视图空间来说的，XYZ轴遵循右手坐标系定则;
