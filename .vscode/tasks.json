@@ -8,6 +8,7 @@
                 "-g",
                 "${file}",
                 "${workspaceFolder}/src/lab2/shaderProgram.cpp",
+                "${workspaceFolder}/src/lab3/camera.cpp",
                 "-o",
                 "${workspaceFolder}/DeBug/${fileBasenameNoExtension}.exe",
                 "-I",

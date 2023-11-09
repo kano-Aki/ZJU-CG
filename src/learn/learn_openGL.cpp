@@ -11,7 +11,7 @@
 #define width 800
 #define height 600
 glm::vec3 cameraPos=glm::vec3(0.0f,0.0f,3.0f);
-glm::vec3 cameraGaze=glm::vec3(0.0f,0.0f,-1.0f);
+glm::vec3 cameraGaze=glm::vec3(0.0f,0.0f,-1.0f);//相机的gaze方向，即target-position
 glm::vec3 cameraUP=glm::vec3(0.0f,1.0f,0.0f);
 float deltatime=0;
 float lastframe=0;
@@ -38,8 +38,9 @@ void process_input(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += glm::normalize(glm::cross(cameraGaze, cameraUP)) * cameraSpeed;
 }
-//up应为view坐标系中的+y轴，gaze应为-z轴，glm::LookAt函数要求的gaze则是+z轴，所以与实际相反，需要取反
-
+//虽然教程里说他取得方向向量与实际相反，但在给glm::lookAt函数传目标场景的参数时，传的是position+direction，这nm明明就没有取反，按没有取反计算下面的结果运行也是正确的
+//包括按D时，应该向相机坐标的x方向移动，glm::cross(cameraGaze, cameraUP)，在没取反时才是x(-z×y)。太逆天了
+//上一帧渲染时间越长，相机移动速度越快，从而可以使得在相同时间内，场景变换程度相同
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if(firstMouse)
@@ -49,11 +50,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         firstMouse = false;
     }
 
-    float xoffset = lastX - xpos;
+    float xoffset =xpos-lastX;
     float yoffset=lastY-ypos;
-    //关于这里，因为gaze方向取反了，实际方向为(0,0,1)，想象y变大，方向应往上抬，此时沿x轴顺时针旋转，所以角度应减小(因为逆时针为正)
-    //想象x变大，方向应往右转，此时沿y轴顺时针旋转，所以角度应减小(因为逆时针为正)
-    //需要根据实际的gaze方向确定谁减谁
+    //俯仰角(Pitch)：沿x轴旋转的角，从上往下看的角。所以方向指向-y时应为正
+    //偏航角(Yaw)：沿y轴旋转的角，从左往右看的角。所以方向指向+x时应为正
+    //方向为(0,0,-1)，想象y变大，方向应往上抬，考虑不断向下时，pitch在变大，所以这里应该是减小，所以yoffset取负
+    //想象x变大，方向应往右转，yaw变大，所以xoffset取正
+    //需要根据gaze方向确定谁减谁
     lastX = xpos;
     lastY = ypos;
 
@@ -73,19 +76,20 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     // front.x = cos(glm::radians(yaw))*cos(glm::radians(pitch));
     // front.y = sin(glm::radians(pitch));
     // front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.x = -sin(glm::radians(yaw));
+    front.x = sin(glm::radians(yaw));
     front.y = cos(glm::radians(yaw))*sin(glm::radians(pitch));
     front.z = -cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraGaze = glm::normalize(front);
     //为右手系，从轴的正方向看去的逆时针旋转。设初始方向向量为(0,0,1)。下面结果的正负与坐标系有关
     //因为相机是沿着-z方向观察(变换至原点后)，所以pitch是方向向量和x轴决定的平面和xz平面的夹角(绕x轴旋转)，是一个平面角，
     //也就是方向向量的垂直x轴的分量与xz平面的夹角，所以只旋转pitch时，方向向量会变成(0，-sinp，cosp)
-    //yaw是方向向量和y轴决定的平面和zy平面的夹角(绕y轴旋转)，所以只旋转yaw时，方向向量会变成(siny，0，cosy)
+    //yaw是方向向量和y轴决定的平面和zy平面的夹角(绕y轴旋转)，这里需要注意的是，关于yaw，根据定义其绕y轴顺时针转时为正，
+    //而ppt中给出的旋转矩阵都是默认逆时针，所以绕y的矩阵要代入-α(pitch是恰好相同的)，所以只旋转yaw时，方向向量会变成(-siny，0，cosy)
 
-    //单看pitch，它不会对x造成影响，但是旋转yaw之后，会对旋转pitch造成影响。事实上对于欧拉角，旋转的顺序对于最终结果是有影响的
+    //单看yaw，它不会对y造成影响，但是旋转yaw之后，再旋转pitch，此时yaw就会对y产生影响了。事实上对于欧拉角，旋转的顺序对于最终结果是有影响的
     //所以需要指定旋转顺序才能得到确定结果，指定顺序后实际上少了一个自由度，所以欧拉角会造成Gimbal Lock问题，有些角度无法得到。
-    //unity中顺序一般为yxz。先绕y轴旋转yaw，然后绕x轴旋转pitch，考虑ppt中的变换矩阵，Rx*Ry，最后方向向量应为(siny,-cosy*sinp,cosy*cosp)
-    //与教程不一样，但根据矩阵应该就是这样，很奇怪，结果也是对的
+    //unity中顺序一般为yxz。先绕y轴旋转yaw，然后绕x轴旋转pitch，考虑ppt中的变换矩阵，Rx*Ry，最后方向向量应为(-siny,-cosy*sinp,cosy*cosp)
+    //教程的顺序则是先pitch，再raw
     //参考https://blog.csdn.net/Jaihk662/article/details/106519595
 
     //关于openGL的左手系
@@ -96,6 +100,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     //若没改变参数的情况下，opengl默认在NDC坐标系下，-1是在近裁剪面处，+1是在远裁剪面处，
     //那么想象一下，近处值小，远处值大，Z轴是朝向屏幕里面的，就解释了为什么NDC是左手系的原因。
     //即在NDC里，为了让z与深度值符合，选择左手系
+
+    //内在旋转（Intrinsic Rotation）是一种旋转方式，它是相对于物体自身的坐标系（也称为物体坐标系或局部坐标系）进行的。这意味着，当物体旋转时，物体的坐标系也会随之旋转。
+    //例如，假设我们有一个飞机，它可以围绕其自身的轴进行旋转。这些轴通常被称为滚动（Roll，围绕前后轴旋转）、偏航（Yaw，围绕垂直轴旋转）和俯仰（Pitch，围绕左右轴旋转）。当飞机进行滚动、偏航或俯仰时，它是在其自身的坐标系中进行旋转，因此这就是内在旋转。
+    //代码中，yaw和pitch就是内在旋转的角度，它们是相对于摄像机自身的坐标系进行的旋转。这些旋转会改变摄像机的前向向量（cameraGaze），从而改变摄像机的观察方向。
+    //如果先转yaw，则xz轴的位置都被改变，随后旋转pitch则是绕改变后的x轴
+    //外在旋转则是相对于固定的坐标系（也称为世界坐标系或全局坐标系）进行的
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {

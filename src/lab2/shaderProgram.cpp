@@ -1,5 +1,6 @@
 #include<my_header/shaderProgram.h>
-
+#define STB_IMAGE_IMPLEMENTATION
+#include"stb_image/stb_image.h"
 ShaderProgram::ShaderProgram(const char* vShader,const char* fShader)
 {
     // ifstream vertex_file,fragment_file;
