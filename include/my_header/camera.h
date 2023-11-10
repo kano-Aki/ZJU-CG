@@ -14,9 +14,9 @@ enum camera_movement{
     RIGHT
 };
 
-const float YAW = 0.0f;
+const float YAW = -90.0f;// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 const float PITCH = 0.0f;
-const float SPEED = 2.5f;
+const float SPEED = 5.0f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 const glm::vec3 FRONT=glm::vec3(0.0f,0.0f,-1.0f);//默认的相机方向向量的反方向

@@ -73,25 +73,27 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         pitch = -89.0f;
 
     glm::vec3 front;
-    // front.x = cos(glm::radians(yaw))*cos(glm::radians(pitch));
-    // front.y = sin(glm::radians(pitch));
-    // front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.x = sin(glm::radians(yaw));
-    front.y = cos(glm::radians(yaw))*sin(glm::radians(pitch));
-    front.z = -cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    // front.x=-sin(glm::radians(yaw))*cos(glm::radians(pitch));
+    // front.y=sin(glm::radians(pitch));
+    // front.z=-cos(glm::radians(yaw))*cos(glm::radians(pitch));
+    front.x = cos(glm::radians(yaw))*cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraGaze = glm::normalize(front);
-    //为右手系，从轴的正方向看去的逆时针旋转。设初始方向向量为(0,0,1)。下面结果的正负与坐标系有关
-    //因为相机是沿着-z方向观察(变换至原点后)，所以pitch是方向向量和x轴决定的平面和xz平面的夹角(绕x轴旋转)，是一个平面角，
-    //也就是方向向量的垂直x轴的分量与xz平面的夹角，所以只旋转pitch时，方向向量会变成(0，-sinp，cosp)
-    //yaw是方向向量和y轴决定的平面和zy平面的夹角(绕y轴旋转)，这里需要注意的是，关于yaw，根据定义其绕y轴顺时针转时为正，
-    //而ppt中给出的旋转矩阵都是默认逆时针，所以绕y的矩阵要代入-α(pitch是恰好相同的)，所以只旋转yaw时，方向向量会变成(-siny，0，cosy)
-
     //单看yaw，它不会对y造成影响，但是旋转yaw之后，再旋转pitch，此时yaw就会对y产生影响了。事实上对于欧拉角，旋转的顺序对于最终结果是有影响的
     //所以需要指定旋转顺序才能得到确定结果，指定顺序后实际上少了一个自由度，所以欧拉角会造成Gimbal Lock问题，有些角度无法得到。
-    //unity中顺序一般为yxz。先绕y轴旋转yaw，然后绕x轴旋转pitch，考虑ppt中的变换矩阵，Rx*Ry，最后方向向量应为(-siny,-cosy*sinp,cosy*cosp)
+    //unity中顺序一般为yxz。先绕y轴旋转yaw，然后绕x轴旋转pitch，考虑ppt中的变换矩阵，Rx*Ry，最后方向向量应为(siny,-cosy*sinp,cosy*cosp)
     //教程的顺序则是先pitch，再raw
     //参考https://blog.csdn.net/Jaihk662/article/details/106519595
     //个人认为这些顺序都是自己规定的，保持统一即可
+    //对不起，我向教程道歉，红豆泥私密马赛黛西大。按照yx的顺序，在yaw转过一圈，即到物体背面之后，pitch的实际旋转方向会相反
+    //按照xy则正常。个人认为是因为yx顺序，先yaw转到物体背面，此时pitch的正负应该颠倒，但并没有如此，所以竖直移动方向颠倒了
+    //按照xy，先在原本位置转完pitch，再yaw，则不会有这个问题
+    //顺序真的很重要
+    //我应该真的理解了，这个yaw，按照教程的图是与x轴重合且朝向+x轴时为0啊，这是否。
+    //所以教程中yaw的初始值也是设为-90(面对-z)，即面对+z轴，所以yaw改变时，实际绕y轴旋转的角度为-PI/2-yaw(想象特殊情况，从-90往0转回去)
+    //所以将这个yaw代入xy顺序旋转得到的变换矩阵(不如说是乘完原gaze后的结果)(即76-78行)之后，便得到79-81的矩阵
+    //虽然不知道为什么在我的solar sysytem，在转进太阳里面的某个神秘位置之后又会颠倒，这个位置我自己也找不到第二次了
 
     //关于openGL的左手系
     //首先，opengl之所以是“右手坐标系”，是针对模型空间，视图空间来说的，XYZ轴遵循右手坐标系定则;
@@ -327,6 +329,8 @@ int main()
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             shaderProgram.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
+            //这里使用drawarray，是因为顶点数组中给出了完整的36个点，包括重复的点，所以可以直接用
+            //若没有重复给出，则还是要用drawelement，给出索引数组
         }
         float currentframe=glfwGetTime();
         deltatime=currentframe-lastframe;

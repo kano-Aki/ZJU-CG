@@ -36,7 +36,8 @@ int Camera::mouse_input(float xoffset,float yoffset,bool constrict_pitch)
     xoffset*=mouse_sensitivity;
     yoffset*=mouse_sensitivity;
     cam_yaw+=xoffset;
-    cam_pitch+=yoffset;
+    if(cam_yaw>180.0f) cam_pitch-=yoffset; 
+    else cam_pitch+=yoffset;
     if(constrict_pitch)
     {
         if(cam_pitch>89.0f)
@@ -51,9 +52,12 @@ int Camera::mouse_input(float xoffset,float yoffset,bool constrict_pitch)
 int Camera::update_camera_vectors()
 {
     glm::vec3 front;
-    front.x = sin(glm::radians(cam_yaw));
-    front.y = cos(glm::radians(cam_yaw))*sin(glm::radians(cam_pitch));
-    front.z = -cos(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
+    // front.x=-sin(glm::radians(cam_yaw))*cos(glm::radians(cam_pitch));
+    // front.y=sin(glm::radians(cam_pitch));
+    // front.z=-cos(glm::radians(cam_yaw))*cos(glm::radians(cam_pitch));
+    front.x = cos(glm::radians(cam_yaw))*cos(glm::radians(cam_pitch));
+    front.y = sin(glm::radians(cam_pitch));
+    front.z = sin(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
     cam_front = glm::normalize(front);
 
     cam_right=glm::normalize(glm::cross(cam_front,world_up));
@@ -67,8 +71,8 @@ int Camera::mouse_scroll(float yoffset)
     view_angle-=yoffset;
     if(view_angle<=1.0f)
         view_angle=1.0f;
-    if(view_angle>=45.0f)
-        view_angle=45.0f;
+    if(view_angle>=89.0f)
+        view_angle=89.0f;
 
     return 0;
 }
