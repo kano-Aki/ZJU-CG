@@ -3,22 +3,6 @@
 #include"stb_image/stb_image.h"
 ShaderProgram::ShaderProgram(const char* vShader,const char* fShader)
 {
-    // ifstream vertex_file,fragment_file;
-    // vertex_file.open(vertices_path);
-    // fragment_file.open(fragment_path);
-
-    // stringstream vertex_stream,fragment_stream;
-    // vertex_stream<<vertex_file.rdbuf();
-    // fragment_stream<<fragment_file.rdbuf();
-
-    // string vertex_code,fragment_code;
-    // vertex_stream>>vertex_code;
-    // fragment_stream>>fragment_code;
-    // const char* vShader=vertex_code.c_str();
-    // const char* fShader=fragment_code.c_str();
-    // vertex_file.close();
-    // fragment_file.close();
-
     unsigned int vertex,fragment;
     int success;
     char infoLog[512];
@@ -74,3 +58,43 @@ int ShaderProgram::setMat4(const char* name, glm::mat4 value)
     glUniformMatrix4fv(glGetUniformLocation(program_ID,name),1,GL_FALSE,glm::value_ptr(value));
     return 0;
 }
+
+void ShaderProgram::sphere(float radius,glm::vec3 center,int precision,vector<float>& vertices,vector<unsigned int>& indices)
+{
+    for(int i=0;i<precision;i++)
+    {
+        for(int j=0;j<precision;j++)
+        {
+            float theta=i*1.0/(precision-1)*2*PI;///方位角，范围是[0, 2π]
+            float phi=j*1.0/(precision-1)*PI;//仰角，范围是[0, π]
+            float x=radius*sin(phi)*cos(theta)+center.x;
+            float y=radius*sin(phi)*sin(theta)+center.y;
+            float z=radius*cos(phi)+center.z;
+            float u = i*1.0/(precision-1);//纹理坐标，只是一种映射方法
+            float v = j*1.0/(precision-1);
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+            vertices.push_back(u);
+            vertices.push_back(v);
+        }
+    }
+    for (int i = 0; i < precision; i++)
+	{
+		for (int j = 0; j < precision; j++)
+		{
+            int nexti=(i+1)%precision;
+            int nextj=(j+1)%precision;
+			indices.push_back(i * precision + j);
+			indices.push_back(nexti * precision + j);
+			indices.push_back(nexti * precision + nextj);
+									 
+			indices.push_back(i * precision + j);
+			indices.push_back(nexti * precision + nextj);
+			indices.push_back(i * precision + nextj);
+		}//索引，对于每个点，画出它的上下两个三角形.想象一下，这样的两个三角形组成的就是一个矩形
+	}
+    //最初在68、69两行，因为计算角度时除以precision，导致两个角度都无法达到2π，所以最后一个点和第一个点无法连接，
+    //导致运行时的纹理很明显在图片两侧的拼接处出现明显的模糊条，正是因为纹理坐标虽然相同，但因为角度无法到达2π，所以
+    //两个纹理坐标一致的点，空间坐标分开了，openGL自动对中间部分进行插值，因为二者纹理相同，所以插值会显示条带(相当于被拉长了)
+}//若精度为100，则画100*100个点来描述球体
