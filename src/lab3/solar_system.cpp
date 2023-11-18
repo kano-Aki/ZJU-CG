@@ -87,9 +87,9 @@ int main()
     //以上完成窗口初始化和回调函数设置
 
     glEnable(GL_DEPTH_TEST);//开启深度测试
-    ShaderProgram shaderProgram(vertexShaderSource,fragmentShaderSource);//创建着色器程序
-    vector<float> sun,earth,saturn;
-    vector<unsigned int> suni,earthi,saturni;
+    ShaderProgram shaderProgram("C:/D/ZJU/learn/31/cg/lab/src/lab3/shader/solar.vs","C:/D/ZJU/learn/31/cg/lab/src/lab3/shader/solar.fs");//创建着色器程序
+    std::vector<float> sun,earth,saturn;
+    std::vector<unsigned int> suni,earthi,saturni;
     ShaderProgram::sphere(6.0f,glm::vec3(0.0f,0.0f,-10.0f),100,sun,suni);//创建太阳顶点数组
     ShaderProgram::sphere(1.0f,glm::vec3(10.0f,0.0f,-10.0f),100,earth,earthi);//创建地球顶点数组
     ShaderProgram::sphere(3.0f,glm::vec3(20.0f,0.0f,-10.0f),100,saturn,saturni);//创建土星顶点数组
@@ -152,7 +152,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);//设置纹理过滤方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);//设置纹理过滤方式
     int image_width,image_height,image_nrChannels;
-    unsigned char *data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/lab3/sun.jpg",&image_width,&image_height,&image_nrChannels,0);
+    unsigned char *data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/lab3/image/sun.jpg",&image_width,&image_height,&image_nrChannels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image_width,image_height,0,GL_RGB,GL_UNSIGNED_BYTE,data);//生成纹理
@@ -171,7 +171,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);//设置纹理环绕方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);//设置纹理过滤方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);//设置纹理过滤方式
-    data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/lab3/earth.jpg",&image_width,&image_height,&image_nrChannels,0);
+    data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/lab3/image/earth.jpg",&image_width,&image_height,&image_nrChannels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image_width,image_height,0,GL_RGB,GL_UNSIGNED_BYTE,data);//生成纹理
@@ -190,7 +190,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);//设置纹理环绕方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);//设置纹理过滤方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);//设置纹理过滤方式
-    data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/lab3/saturn.jpg",&image_width,&image_height,&image_nrChannels,0);
+    data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/lab3/image/saturn.jpg",&image_width,&image_height,&image_nrChannels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image_width,image_height,0,GL_RGB,GL_UNSIGNED_BYTE,data);//生成纹理

@@ -152,7 +152,7 @@ int main()
         22,23,24,
     };
     
-    ShaderProgram shaderProgram(vertexShaderSource,fragmentShaderSource);//创建着色器程序
+    ShaderProgram shaderProgram("C:/D/ZJU/learn/31/cg/lab/src/lab2/shader/flag.vs","C:/D/ZJU/learn/31/cg/lab/src/lab2/shader/flag.fs");//创建着色器程序
     unsigned int VBO_quard;
     glGenBuffers(1,&VBO_quard);//创建VBO
     unsigned int EBO_quard;

@@ -7,8 +7,7 @@
             "args": [
                 "-g",
                 "${file}",
-                "${workspaceFolder}/src/lab2/shaderProgram.cpp",
-                "${workspaceFolder}/src/lab3/camera.cpp",
+                "${workspaceFolder}/lib/src/*.cpp",
                 "-o",
                 "${workspaceFolder}/DeBug/${fileBasenameNoExtension}.exe",
                 "-I",
