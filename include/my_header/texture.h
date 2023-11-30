@@ -15,7 +15,7 @@ enum{
 
 class Texture {
 public:
-    Texture(char* image_path,int image_format=jpg,GLenum texture_wrap_s=GL_REPEAT,GLenum texture_wrap_t=GL_REPEAT, 
+    Texture(const char* image_path,GLenum texture_wrap_s=GL_REPEAT,GLenum texture_wrap_t=GL_REPEAT, 
             GLenum texture_filter_min=GL_LINEAR_MIPMAP_LINEAR,GLenum texture_filter_max=GL_LINEAR);
     //默认生成2D纹理
     unsigned int texture_num;

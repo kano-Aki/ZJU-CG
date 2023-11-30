@@ -36,7 +36,7 @@ struct SpotLight//聚光灯，存在衰减，存在截止角度
     vec3 color;//光源颜色
 
     float cutoff;
-    float outerCutoff;
+    float outerCutoff;//外截止角，均以cos值表示
     vec3 spotDir;//聚光灯方向
 
     float constant;

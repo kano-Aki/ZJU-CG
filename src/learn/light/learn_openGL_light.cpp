@@ -167,9 +167,9 @@ float vertices[] = {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    Texture texture1("C:/D/ZJU/learn/31/cg/lab/src/learn/light/image/container2.png",png);
-    Texture texture2("C:/D/ZJU/learn/31/cg/lab/src/learn/light/image/container2_specular.png",png);
-    Texture texture3("C:/D/ZJU/learn/31/cg/lab/src/learn/light/image/shenli.jpg",jpg,GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE);
+    Texture texture1("C:/D/ZJU/learn/31/cg/lab/src/learn/light/image/container2.png");
+    Texture texture2("C:/D/ZJU/learn/31/cg/lab/src/learn/light/image/container2_specular.png");
+    Texture texture3("C:/D/ZJU/learn/31/cg/lab/src/learn/light/image/shenli.jpg",GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE);
 
     while (!glfwWindowShouldClose(window))
     {

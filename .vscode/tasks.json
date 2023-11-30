@@ -16,7 +16,9 @@
                 "${workspaceFolder}/lib/",
                 "-lopengl32",
                 "-lgl",
-                "${workspaceFolder}/Debug/glfw3.dll"
+                "-lassimp",
+                //"${workspaceFolder}/Debug/glfw3.dll"
+                "-lglfw3dll"
             ],
             "problemMatcher": [
                 "$gcc"
