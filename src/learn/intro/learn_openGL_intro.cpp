@@ -57,6 +57,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     //方向为(0,0,-1)，想象y变大，方向应往上抬，考虑不断向下时，pitch在变大，所以这里应该是减小，所以yoffset取负
     //想象x变大，方向应往右转，yaw变大，所以xoffset取正
     //需要根据gaze方向确定谁减谁
+    //###事实上最后的计算公式根据你自己定的初始值和旋转方向来定都ok。保持一致即可
     lastX = xpos;
     lastY = ypos;
 
@@ -73,12 +74,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         pitch = -89.0f;
 
     glm::vec3 front;
-    // front.x=-sin(glm::radians(yaw))*cos(glm::radians(pitch));
-    // front.y=sin(glm::radians(pitch));
-    // front.z=-cos(glm::radians(yaw))*cos(glm::radians(pitch));
-    front.x = cos(glm::radians(yaw))*cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.x=sin(glm::radians(yaw))*cos(glm::radians(pitch));
+    front.y=sin(glm::radians(pitch));
+    front.z=-cos(glm::radians(yaw))*cos(glm::radians(pitch));
+    // front.x = cos(glm::radians(yaw))*cos(glm::radians(pitch));
+    // front.y = sin(glm::radians(pitch));
+    // front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraGaze = glm::normalize(front);
     //单看yaw，它不会对y造成影响，但是旋转yaw之后，再旋转pitch，此时yaw就会对y产生影响了。事实上对于欧拉角，旋转的顺序对于最终结果是有影响的
     //所以需要指定旋转顺序才能得到确定结果，指定顺序后实际上少了一个自由度，所以欧拉角会造成Gimbal Lock问题，有些角度无法得到。
@@ -91,8 +92,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     //按照xy，先在原本位置转完pitch，再yaw，则不会有这个问题
     //顺序真的很重要
     //我应该真的理解了，这个yaw，按照教程的图是与x轴重合且朝向+x轴时为0啊，这是否。
-    //所以教程中yaw的初始值也是设为-90(面对-z)，即面对+z轴，所以yaw改变时，实际绕y轴旋转的角度为-PI/2-yaw(想象特殊情况，从-90往0转回去)
+    //所以教程中yaw的初始值也是设为-90(面对-z)，即面对+z轴，所以yaw改变时，按我的定义,实际的yaw为PI/2-yaw
     //所以将这个yaw代入xy顺序旋转得到的变换矩阵(不如说是乘完原gaze后的结果)(即76-78行)之后，便得到79-81的矩阵
+    //###事实上最后的计算公式根据你自己定的初始值和旋转方向来定都ok。我这里yaw初始值为0，但按79-81的公式，来计算，会导致，刚开始移动鼠标时，相机会直接朝向+x轴
     //虽然不知道为什么在我的solar sysytem，在转进太阳里面的某个神秘位置之后又会颠倒，这个位置我自己也找不到第二次了
 
     //关于openGL的左手系
@@ -233,7 +235,7 @@ int main()
         glm::vec3(-1.3f,  1.0f, -1.5f)  
     };
 
-    ShaderProgram shaderProgram("C:/D/ZJU/learn/31/cg/lab/src/learn/intro/shader/cube.vs","C:/D/ZJU/learn/31/cg/lab/src/learn/intro/shader/cube.fs");
+    ShaderProgram shaderProgram("D:/ZJU/learn/31/cg/ZJU-CG/src/learn/intro/shader/cube.vs","D:/ZJU/learn/31/cg/ZJU-CG/src/learn/intro/shader/cube.fs");
     unsigned int VBO;
     glGenBuffers(1,&VBO);//创建VBO
     // unsigned int EBO;
@@ -260,7 +262,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);//设置纹理过滤方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);//设置纹理过滤方式
     int image_width,image_height,image_nrChannels;
-    unsigned char *data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/learn/intro/image/container.jpg",&image_width,&image_height,&image_nrChannels,0);
+    unsigned char *data=stbi_load("D:/ZJU/learn/31/cg/ZJU-CG/src/learn/intro/image/container.jpg",&image_width,&image_height,&image_nrChannels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image_width,image_height,0,GL_RGB,GL_UNSIGNED_BYTE,data);//生成纹理
@@ -280,7 +282,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);//设置纹理过滤方式
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);//设置纹理过滤方式
     stbi_set_flip_vertically_on_load(true);//翻转y轴
-    data=stbi_load("C:/D/ZJU/learn/31/cg/lab/src/learn/intro/image/awesomeface.png",&image_width,&image_height,&image_nrChannels,0);
+    data=stbi_load("D:/ZJU/learn/31/cg/ZJU-CG/src/learn/intro/image/awesomeface.png",&image_width,&image_height,&image_nrChannels,0);
     if(data)
     {
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image_width,image_height,0,GL_RGBA,GL_UNSIGNED_BYTE,data);//生成纹理

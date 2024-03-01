@@ -19,7 +19,7 @@ const float PITCH = 0.0f;
 const float SPEED = 5.0f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
-const glm::vec3 FRONT=glm::vec3(0.0f,0.0f,-1.0f);//默认的相机方向向量的反方向
+const glm::vec3 FRONT=glm::vec3(0.0f,0.0f,-1.0f);//默认的相机方向向量
 
 class Camera{
 public:
